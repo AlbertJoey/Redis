@@ -11,50 +11,48 @@ namespace Redis
     {
         static void Main(string[] args)
         {
-            var redisClient = new RedisClient("192.168.100.37", 6379);
+
+            var a=  RedisHelper.Delete("UserName");
+            var b= RedisHelper.Delete("UserInfo");
+            var c=RedisHelper.Delete("Bc");
+            var d=    RedisHelper.Delete("Computer");
+
+            var isdelete =  RedisHelper.Delete("UserName");
+            var isexits = RedisHelper.GetKeyIsExists("UserName");
+
+            RedisHelper.SetStringToRedis("UserName", "asdfasdfasf");
+
+            var username = RedisHelper.GetStringFromRedis("UserName");
 
 
-            //string
-            string userName = "chengjun";
-            //塞入
-            redisClient.Set<string>("UserName", userName);
-            //判断是否存在此键
-            var exist = redisClient.Exists("UserName");
-            //获取
-            var getUserName = redisClient.Get("UserName");
-            //删除
-            var delUserName = redisClient.Del("UserName");
+            RedisHelper.SetHashValuesToRedis("UserInfo", "UserName", "chengjun");
+            RedisHelper.SetHashValuesToRedis("UserInfo", "UserPass", "xxooxxoo");
+            RedisHelper.SetHashValuesToRedis("UserInfo", "UserName", "wangxiangfu");
+            RedisHelper.SetHashValuesToRedis("UserInfo", "UserPass", "xxooxxoo");
+
+            List<string> keyList = RedisHelper.GetHashKeyList("UserInfo");
+            List<string> valueList = RedisHelper.GetHashValueList("UserInfo");
 
 
-            //Hash
-            redisClient.SetEntryInHash("UserInfo", "UserName", userName);
-            redisClient.SetEntryInHash("UserInfo", "UserPass", "123456");
-            //获取
-            List<string> keyList = redisClient.GetHashKeys("UserInfo");
-            List<string> valuesList = redisClient.GetHashValues("UserInfo");
-            //打印
-            Console.WriteLine("Key为：{0},value为：{1}", keyList[0], valuesList[0]);
-
-            //List--队列
-            redisClient.EnqueueItemOnList("Queue", "hello");
-            redisClient.EnqueueItemOnList("Queue", "world");
-            int queueCount = (int)redisClient.GetListCount("Queue");
-            for (int i = 0; i < queueCount; i++)
+            for (int i = 0; i < 10; i++)
             {
-                Console.Write(redisClient.DequeueItemFromList("Queue")+"|");
+                RedisHelper.SetEnqueueItemOnListToRedis("Bc", "asp.net" + (i + 100));
             }
-            Console.WriteLine("\n");
+            List<string> books = RedisHelper.GetListFromRedis("Bc");
 
+            List<string> books3 =RedisHelper.GetListFromRedis("Bc");
 
-            //栈
-            redisClient.PushItemToList("stack", "good");
-            redisClient.PushItemToList("stack", "girl");
-            int pushCount = (int)redisClient.GetListCount("stack");
-            for (int i = 0; i < pushCount; i++)
+            for (int i = 0; i < 10; i++)
             {
-                Console.Write(redisClient.PopItemFromList("stack") + "|");
+                RedisHelper.SetStackItemOnListToRedis("Computer", "lenovo" + i);
             }
-            Console.ReadKey();
+            List<string> computers = RedisHelper.GetListFromRedis("Computer");
+
         }
+    }
+    public class User
+    {
+        public string name { get; set; }
+        public string pass { get; set; }
     }
 }
